@@ -2,62 +2,39 @@
 
 class ContratoWeb extends Contrato {
 
-
-
-    // Atributo privado adicional de ContratoWeb
-
+    // Atributo privado adicional
     private $porcentajeDescuento;
 
-
-
-    // Constructor 
-
+    // Constructor
     public function __construct($vFechaInicio, $vFechaVencimiento, $objPlan, $vEstado, $vCosto, $vSeRenueva, $objCliente, $vPorcentajeDescuento = 10) {
-
-        // constructor de la clase padre Contrato
-
         parent::__construct($vFechaInicio, $vFechaVencimiento, $objPlan, $vEstado, $vCosto, $vSeRenueva, $objCliente);
-
-        
-
-        // Iniciamos el  atributo propio
-
         $this->porcentajeDescuento = $vPorcentajeDescuento;
-
     }
 
-
-
-   // Método de acceso get
-
+    // Métodos de acceso
     public function getPorcentajeDescuento() {
-
         return $this->porcentajeDescuento;
-
     }
-
-
-
-    // Método de acceso set
 
     public function setPorcentajeDescuento($vPorcentajeDescuento) {
-
         $this->porcentajeDescuento = $vPorcentajeDescuento;
-
     }
 
+    // Redefinición del método calcularImporte
+    public function calcularImporte() {
+        $importeBase = parent::calcularImporte();
+        $importeFinal = $importeBase - ($importeBase * $this->getPorcentajeDescuento() / 100);
+        return $importeFinal;
+    }
 
-    //  __toString
-
+    // Método __toString
     public function __toString() {
-
         $cadena = parent::__toString();
-
         $cadena .= "\nPorcentaje de Descuento: " . $this->getPorcentajeDescuento() . "%";
-
         return $cadena;
-
     }
+}
+
 
 
 
