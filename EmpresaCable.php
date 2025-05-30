@@ -50,26 +50,26 @@ class EmpresaCable
 
 
     // Método para incorporar un nuevo plan si no está repetido
-    public function incorporarPlan($objNuevoPlan) {
-        $seAgrego = false;
-        $planes = $this->getColeccionPlanes();
-        $existe = false;
+   public function incorporarPlan($objNuevoPlan) {
+    $seAgrego = false;
+    $planes = $this->getColeccionPlanes();
+    $existe = false;
 
-        foreach ($planes as $objPlan) {
-            if ($objPlan->getColeccionCanales() == $objNuevoPlan->getColeccionCanales() &&
-                $objPlan->getMG() == $objNuevoPlan->getMG()) {
-                $existe = true;
-            }
+    foreach ($planes as $objPlan) {
+        if ($objPlan->getColeccionCanales() == $objNuevoPlan->getColeccionCanales() &&
+            $objPlan->getMG() == $objNuevoPlan->getMG()) {
+            $existe = true;
         }
-
-        if (!$existe) {
-            $planes[] = $objNuevoPlan;
-            $this->setColeccionPlanes($planes);
-            $seAgrego = true;
-        }
-
-        return $seAgrego;
     }
+
+    if (!$existe) {
+        $planes[] = $objNuevoPlan;
+        $this->setColeccionPlanes($planes);
+        $seAgrego = true;
+    }
+
+    return $seAgrego;
+}
 
 
 
