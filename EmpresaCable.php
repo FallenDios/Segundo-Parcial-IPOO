@@ -149,21 +149,26 @@ public function pagarContrato($codigoContrato) {
 
     foreach ($coleccionContratos as $objContrato) {
         if ($objContrato->getCodigo() == $codigoContrato) {
+
+            $objContrato->actualizarEstadoContrato(); // ✔ actualizar el estado antes
+
             $estado = $objContrato->getEstado();
 
             if ($estado == "finalizado") {
                 $importeFinal = 0;
+
             } elseif ($estado == "al día") {
-                $objContrato->setFechaVencimiento(date('Y-m-d', strtotime($objContrato->getFechaVencimiento(). ' +1 month')));
+                $objContrato->setFechaVencimiento(date('Y-m-d', strtotime($objContrato->getFechaVencimiento() . ' +1 month')));
                 $importeFinal = $objContrato->calcularImporte();
+
             } elseif ($estado == "moroso" || $estado == "suspendido") {
-                $diasVencido = $objContrato->diasContratoVencido();
+                $diasVencido = $objContrato->diasContratoVencido(); // ✔ método del objeto
                 $multa = $objContrato->calcularImporte() * 0.10 * $diasVencido;
                 $importeFinal = $objContrato->calcularImporte() + $multa;
 
                 if ($estado == "moroso") {
                     $objContrato->setEstado("al día");
-                    $objContrato->setFechaVencimiento(date('Y-m-d', strtotime($objContrato->getFechaVencimiento(). ' +1 month')));
+                    $objContrato->setFechaVencimiento(date('Y-m-d', strtotime($objContrato->getFechaVencimiento() . ' +1 month')));
                 }
             }
         }
@@ -171,6 +176,7 @@ public function pagarContrato($codigoContrato) {
 
     return $importeFinal;
 }
+
 
 
 }
