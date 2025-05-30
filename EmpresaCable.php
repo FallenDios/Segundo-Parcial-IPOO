@@ -90,14 +90,12 @@ class EmpresaCable
 }
 
 // Metodo incorporar contrato
-
 public function incorporarContrato($objPlan, $objCliente, $fechaInicio, $fechaVencimiento, $esWeb) {
     $contratos = $this->getColeccionContratos();
 
     // Buscar contrato activo del cliente
     foreach ($contratos as $objContrato) {
         $cliente = $objContrato->getObjCliente();
-
         if ($cliente->getTipoDoc() == $objCliente->getTipoDoc() &&
             $cliente->getNroDoc() == $objCliente->getNroDoc() &&
             $objContrato->getEstado() != "finalizado") {
@@ -112,11 +110,13 @@ public function incorporarContrato($objPlan, $objCliente, $fechaInicio, $fechaVe
         $nuevoContrato = new Contrato($fechaInicio, $fechaVencimiento, $objPlan, "al día", 0, true, $objCliente);
     }
 
+    // Calcular e informar el costo
+    $nuevoContrato->setCosto($nuevoContrato->calcularImporte());
+
     // Agregarlo a la colección
     $contratos[] = $nuevoContrato;
     $this->setColeccionContratos($contratos);
 }
-
 
 // Método para retornar el promedio de importes de los contratos de un plan específico
 public function retornarPromImporteContratos($codigoPlan) {
