@@ -1,0 +1,69 @@
+<?php
+
+include_once 'Canal.php';
+include_once 'Plan.php';
+include_once 'Cliente.php';
+include_once 'Contrato.php';
+include_once 'ContratoWeb.php';
+include_once 'EmpresaCable.php';
+
+// 1. Crear canales
+$objCanal1 = new Canal("noticias", 300, true);
+$objCanal2 = new Canal("deportivo", 500, false);
+$objCanal3 = new Canal("películas", 400, true);
+
+// 2. Crear arreglos de canales
+$canalesPlan1 = [$objCanal1, $objCanal2];
+$canalesPlan2 = [$objCanal1, $objCanal2, $objCanal3];
+
+// 3. Crear planes
+$objPlan1 = new Plan(111, $canalesPlan1, 1500, 100);
+$objPlan2 = new Plan(222, $canalesPlan2, 2000, 200);
+
+// 4. Crear cliente
+$objCliente = new Cliente("DNI", "35123456", "Damien", "Thorn");
+
+// 5. Crear empresa cable con colecciones vacías inicialmente
+$coleccionPlanes = [];
+$coleccionCanales = [$objCanal1, $objCanal2, $objCanal3];
+$coleccionClientes = [$objCliente];
+$coleccionContratos = [];
+
+$objEmpresaCable = new EmpresaCable($coleccionPlanes, $coleccionCanales, $coleccionClientes, $coleccionContratos);
+
+// 6. Incorporar planes
+$objEmpresaCable->incorporarPlan($objPlan1);
+$objEmpresaCable->incorporarPlan($objPlan2);
+
+// 7. Fechas de los contratos
+$fechaInicio = date("Y-m-d");
+$fechaVencimiento = date("Y-m-d", strtotime("+30 days"));
+
+// 8. Crear y mostrar 3 contratos (1 empresa, 2 web)
+$objContratoEmpresa = new Contrato($fechaInicio, $fechaVencimiento, $objPlan1, "al día", 0, true, $objCliente);
+$objContratoWeb1 = new ContratoWeb($fechaInicio, $fechaVencimiento, $objPlan1, "al día", 0, true, $objCliente);
+$objContratoWeb2 = new ContratoWeb($fechaInicio, $fechaVencimiento, $objPlan2, "al día", 0, true, $objCliente);
+
+echo "Importe Contrato en Empresa: " . $objContratoEmpresa->calcularImporte() . "\n";
+echo "Importe Contrato Web 1: " . $objContratoWeb1->calcularImporte() . "\n";
+echo "Importe Contrato Web 2: " . $objContratoWeb2->calcularImporte() . "\n";
+
+// 9. Incorporar contratos con política de contrato único activo
+$objEmpresaCable->incorporarContrato($objPlan1, $objCliente, $fechaInicio, $fechaVencimiento, false);
+$objEmpresaCable->incorporarContrato($objPlan2, $objCliente, $fechaInicio, $fechaVencimiento, true);
+
+// 10. Obtener colección actualizada de contratos
+$contratosActuales = $objEmpresaCable->getColeccionContratos();
+
+// 11. Pagar contratos
+$codigoEmpresa = $contratosActuales[0]->getCodigo();
+$importeEmpresa = $objEmpresaCable->pagarContrato($codigoEmpresa);
+echo "Importe abonado por contrato en empresa: $importeEmpresa\n";
+
+$codigoWeb = $contratosActuales[1]->getCodigo();
+$importeWeb = $objEmpresaCable->pagarContrato($codigoWeb);
+echo "Importe abonado por contrato vía web: $importeWeb\n";
+
+// 12. Promedio de contratos con código 111
+$promedioImportes = $objEmpresaCable->retornarPromImporteContratos(111);
+echo "Promedio de importes del plan 111: $promedioImportes\n";
